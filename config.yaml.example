@@ -1,0 +1,117 @@
+sources:
+
+    - url: https://news.ycombinator.com/news
+      name: HackerNews
+    - url: https://www.producthunt.com/
+      name: ProductHunt
+    - url: https://github.com/trending
+      name: GitHub Trending
+    - url: https://huggingface.co/papers
+      name: HuggingFace Papers
+    - url: https://news.smol.ai/
+      name: smol.ai
+    - url: https://www.superhuman.ai/
+      name: Superhuman AI
+    - url: https://www.bensbites.com/
+      name: Ben's Bites
+    - url: https://techcrunch.com/category/artificial-intelligence/
+      name: TechCrunch AI
+    - url: https://www.futurepedia.io/ai-innovations
+      name: Futurepedia Innovations
+
+  reddit:
+    - subreddit: singularity
+    - subreddit: AINewsMinute
+    - subreddit: LocalLLaMA
+
+  youtube:
+    - channel: "@AIDailyBrief"
+      channel_id: UCKelCK4ZaO6HeEI1KQjqzWA
+    - channel: "@matthew_berman"
+      channel_id: UCawZsQWqfGSbCI5yjkdVkTA
+
+  twitter:
+    - handle: nlw       # Add your X handles here
+    - handle: edsim
+
+  app_stores:
+    - url: https://appmagic.rocks/top-charts/apps
+      name: AppMagic
+    - url: https://appraven.net/apps/popular?type=apps
+      name: AppRaven
+
+  # Direct JSON API endpoints — structured data, no scraping needed
+  api_endpoints:
+    - url: https://www.futurepedia.io/api/homepage/tools
+      name: Futurepedia Tools
+      method: POST
+      headers:
+        origin: https://www.futurepedia.io
+        referer: https://www.futurepedia.io/
+      body: {}
+      parser: futurepedia_tools
+      source_type: product_discovery
+
+  gmail:
+    auto_discover: true
+    explicit_senders: []
+
+  data_sources:
+    - url: https://www.neonrev.com/
+      name: NeonRev
+      tier: webfetch
+
+# Scoring & trend detection
+scoring:
+  weights:
+    hackernews: { divisor: 10 }    # 800pts → 80/100
+    reddit: { divisor: 5 }         # 500pts → 100/100
+    github: { divisor: 50 }        # 3000 stars → 60/100
+    youtube: { default: 50 }       # no engagement data from RSS
+    twitter: { divisor: 2 }        # 50 likes → 25/100
+    app_stores: { default: 30 }    # no engagement data
+    gmail: { default: 70 }         # newsletter mention = strong signal
+    api_endpoints: { default: 45 } # structured API data, medium-high signal
+  relevance_keywords:
+    boost_high:    # +15 points — builder-relevant signals
+      - "open source"
+      - "open-source"
+      - "api"
+      - "sdk"
+      - "launch"
+      - "release"
+      - "self-hosted"
+    boost_low:     # +10 points
+      - "pricing"
+      - "integration"
+      - "plugin"
+      - "framework"
+      - "beta"
+      - "developer"
+      - "devtools"
+    dampener:      # -10 points — noise
+      - "meme"
+      - "lol"
+      - "vibe"
+      - "shitpost"
+  cross_source_multiplier: 1.5     # tiered: 1.3x for 2 sources, full 1.5x for 3+
+  newsletter_mention_bonus: 15     # bonus if topic also appears in newsletters
+  velocity:
+    lookback_days: 7
+    acceleration_threshold: 2.0    # source count ratio to flag as 🔥
+    fading_threshold: 0.5          # ratio below this = 📉
+
+# Email notifications (optional)
+# Set GMAIL_ADDRESS and GMAIL_APP_PASSWORD in .env
+email:
+  enabled: true
+  recipients: []  # empty = send to self. Add emails to send to others.
+
+# Output directory for daily notes, ideas, and weekly rollups.
+# Works with any folder — Obsidian is optional.
+# If you use Obsidian, point this to your vault path.
+obsidian:
+  vault_path: ~/Documents/signal-hunter-output
+  daily_folder: Daily
+  ideas_folder: Ideas
+  weekly_folder: Weekly
